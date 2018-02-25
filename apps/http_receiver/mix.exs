@@ -27,8 +27,6 @@ defmodule HttpReceiver.Mixfile do
   defp deps do
     [
       {:cowboy, "~> 2.2.0"},
-      {:exconstructor, "~> 1.1.0"},
-      {:plug, github: "elixir-plug/plug"},
       {:poison, "~> 3.0"}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
