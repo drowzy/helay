@@ -39,7 +39,7 @@ defmodule HttpReceiver do
     :cowboy_router.compile([
       {:_,
        [
-         {"/#{url_base}", HttpReceiver.Hook, %{cb: &HttpReceiver.Dispatcher.dispatch/3, key: subscription_key}}
+         {"/#{url_base}", HttpReceiver.Handler, %{cb: &HttpReceiver.Dispatcher.dispatch/3, key: subscription_key}}
        ]}
     ])
   end

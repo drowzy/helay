@@ -7,7 +7,7 @@ defmodule HelayServer.Hooks.Server do
   def receive_hook(_route, stream) do
     [{HelayServer.Producer, cancel: :transient}]
     |> GenStage.stream()
-    |> Stream.map(&Helay.HelayHook.new(message: Poison.encode!(&1)))
+    |> Stream.map(&Helay.Hook.new(message: Poison.encode!(&1)))
     |> Enum.each(&Server.stream_send(stream, &1))
   end
 end

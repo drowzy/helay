@@ -1,4 +1,4 @@
-defmodule HttpReceiver.Hook do
+defmodule HttpReceiver.Handler do
   require Logger
 
   alias HttpReceiver.Handler.Helpers
