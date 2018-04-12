@@ -5,12 +5,14 @@ defmodule HttpReceiver.Handler do
 
   def init(req, state), do: handle(req, state)
 
-  def handle(%{method: "POST"} = req, %{cb: dispatch, key: key} = state) do
+  def handle(%{method: "POST"} = req, %{mfa: mfa} = state) do
     {body, req} = Helpers.decode_body(req)
+    {mod, fun, args} = mfa
 
     Logger.info("Hook triggered #{:cowboy_req.uri(req)}")
 
-    _ = dispatch.(key, :push_event, body)
+    apply(mod, fun, args ++ [body])
+
     {result, req} = respond(req, 200, %{"message" => "ok"})
     {result, req, state}
   end
