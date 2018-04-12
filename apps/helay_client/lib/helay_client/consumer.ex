@@ -7,8 +7,8 @@ defmodule HelayClient.Consumer do
   end
 
   def init(opts) do
-    channel = Keyword.get(opts, :channel, nil)
-    provider = Keyword.get(opts, :provider, nil)
+    channel = Keyword.fetch!(opts, :channel)
+    provider = Keyword.fetch!(opts, :provider)
     dispatcher = Keyword.get(opts, :dispatcher, fn args -> args end)
 
     Process.send_after(self(), {:consume_hook, provider}, 0)

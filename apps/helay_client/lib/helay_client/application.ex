@@ -17,13 +17,9 @@ defmodule HelayClient.Application do
 
   defp children_by_mode(:mixed, %{receiver_port: port}) do
     port = if Kernel.is_integer(port), do: port, else: String.to_integer(port)
-    dispatch_key = "registry_push"
 
     [
-      Supervisor.Spec.supervisor(HttpReceiver, [[port: port, url_base: "hook", key: dispatch_key]]),
-      Supervisor.Spec.worker(HelayClient.Receiver, [
-        [key: dispatch_key, dispatcher: HelayClient.Handler.make_handler("key", false)]
-      ])
+      Supervisor.Spec.supervisor(HttpReceiver, [{HelayClient.Handler, :handle, ["foo"]}, [port: port, url_base: "hook"]]),
     ]
   end
 
@@ -35,7 +31,7 @@ defmodule HelayClient.Application do
       Supervisor.Spec.worker(HelayClient.Consumer, [
         [
           channel: channel,
-          dispatcher: HelayClient.Handler.make_handler("key", true),
+          dispatcher: &HelayClient.Handler.dispatch/1,
           provider: provider
         ]
       ])

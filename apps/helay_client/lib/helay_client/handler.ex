@@ -1,18 +1,11 @@
 defmodule HelayClient.Handler do
   require Logger
-  def make_handler(key, decode?), do: &dispatch(key, &1, decode?)
 
-  def dispatch(key, event, true) do
-    data =
-      event.message
-      |> Poison.decode!()
-
-    do_dispatch(key, data)
+  def handle(arg, body) do
+    Logger.info("#{__MODULE__} hit with :: #{inspect arg} -> #{inspect body}")
   end
 
-  def dispatch(key, event, _decode?), do: do_dispatch(key, event.message)
-
-  defp do_dispatch(key, data) do
-    IO.puts("Doing dispatch #{inspect data}")
+  def dispatch(args) do
+    Logger.info("Received dispatch #{args}")
   end
 end
