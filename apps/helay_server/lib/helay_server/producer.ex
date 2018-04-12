@@ -13,6 +13,8 @@ defmodule HelayServer.Producer do
     {:producer, %{demand: 0, events: []}}
   end
 
+  def push_event(pid, event), do: GenStage.cast(pid, {:push_event, event})
+
   def handle_demand(demand, %{events: events} = state) when demand > 0 do
     {events, new_events} = Enum.split(events, demand)
     pending_demand = demand - length(events)
@@ -20,10 +22,7 @@ defmodule HelayServer.Producer do
     {:noreply, events, %{state | events: new_events, demand: pending_demand}}
   end
 
-  def handle_info(
-        {:push_event, event},
-        %{events: events, demand: demand} = state
-      ) do
+  def handle_cast({:push_event, event}, %{events: events, demand: demand} = state) do
     {events, new_events} = Enum.split([event | events], demand)
 
     {:noreply, events, %{state | events: new_events, demand: demand - length(events)}}
