@@ -13,7 +13,8 @@ defmodule HelayClient.Application do
     Supervisor.start_link(children, opts)
   end
 
-  defp children_by_mode(mode, conf) when is_binary(mode), do: children_by_mode(String.to_atom(mode), conf)
+  defp children_by_mode(mode, conf) when is_binary(mode),
+    do: children_by_mode(String.to_atom(mode), conf)
 
   defp children_by_mode(:mixed, %{receiver_port: port}) do
     port = if Kernel.is_integer(port), do: port, else: String.to_integer(port)
@@ -21,8 +22,9 @@ defmodule HelayClient.Application do
     [
       %{
         id: HelayClient.HttpReceiver,
-        start: {
-          HttpReceiver, :start_link, [{HelayClient.Handler, :handle, ["foo"]}, [port: port, url_base: "hook"]]}
+        start:
+          {HttpReceiver, :start_link,
+           [{HelayClient.Handler, :handle, ["foo"]}, [port: port, url_base: "hook"]]}
       }
     ]
   end
