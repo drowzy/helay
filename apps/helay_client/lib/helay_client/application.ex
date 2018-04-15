@@ -19,7 +19,11 @@ defmodule HelayClient.Application do
     port = if Kernel.is_integer(port), do: port, else: String.to_integer(port)
 
     [
-      Supervisor.Spec.supervisor(HttpReceiver, [{HelayClient.Handler, :handle, ["foo"]}, [port: port, url_base: "hook"]]),
+      %{
+        id: HelayClient.HttpReceiver,
+        start: {
+          HttpReceiver, :start_link, [{HelayClient.Handler, :handle, ["foo"]}, [port: port, url_base: "hook"]]}
+      }
     ]
   end
 
