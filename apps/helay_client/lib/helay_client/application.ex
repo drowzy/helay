@@ -1,5 +1,6 @@
 defmodule HelayClient.Application do
   use Application
+  alias Plug.Adapters.Cowboy2
   require Logger
 
   def start(_type, _args) do
@@ -7,14 +8,18 @@ defmodule HelayClient.Application do
 
     {:ok, %{mode: mode} = conf} = Confex.fetch_env(:helay_client, :client)
 
-    children = children_by_mode(mode, conf)
+    children =
+      [
+        {HelayClient.Settings, []},
+        {Plug.Adapters.Cowboy2,
+         scheme: :http, plug: HelayClient.Settings.Router, options: [port: 3030, timeout: 70_000]}
+      ] ++ children_by_mode(mode, conf)
 
     opts = [strategy: :one_for_one, name: HelayClient.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
-  defp children_by_mode(mode, conf) when is_binary(mode),
-    do: children_by_mode(String.to_atom(mode), conf)
+  defp children_by_mode(mode, conf) when is_binary(mode), do: children_by_mode(String.to_atom(mode), conf)
 
   defp children_by_mode(:mixed, %{receiver_port: port}) do
     port = if Kernel.is_integer(port), do: port, else: String.to_integer(port)
@@ -22,9 +27,7 @@ defmodule HelayClient.Application do
     [
       %{
         id: HelayClient.HttpReceiver,
-        start:
-          {HttpReceiver, :start_link,
-           [{HelayClient.Handler, :handle, ["foo"]}, [port: port, url_base: "hook"]]}
+        start: {HttpReceiver, :start_link, [{HelayClient.Handler, :handle, ["foo"]}, [port: port, url_base: "hook"]]}
       }
     ]
   end
@@ -42,5 +45,14 @@ defmodule HelayClient.Application do
         ]
       ])
     ]
+  end
+
+  defp router_config(mod) do
+    :cowboy_router.compile([
+      {:_,
+       [
+         {"/settings", HelayClient.HTTPHandler, mod}
+       ]}
+    ])
   end
 end
