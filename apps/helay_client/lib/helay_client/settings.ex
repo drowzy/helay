@@ -2,7 +2,6 @@ defmodule HelayClient.Settings do
   use Agent
 
   def start_link(_) do
-    IO.puts("startingnfnfnfnf")
     Agent.start_link(fn -> Map.new() end, name: __MODULE__)
   end
 
@@ -19,7 +18,6 @@ defmodule HelayClient.Settings do
   end
 
   def put(endpoint, setting) do
-    IO.puts("CALLING PUT #{endpoint}")
     Agent.update(__MODULE__, &Map.put(&1, endpoint, setting))
   end
 end

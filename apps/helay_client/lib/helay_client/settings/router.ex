@@ -3,7 +3,6 @@ defmodule HelayClient.Settings.Router do
 
   alias HelayClient.{Settings, Transform}
 
-  plug Plug.Parsers, parsers: [:urlencoded, :json], pass: ["text/*"], json_decoder: Poison
   plug(Plug.Logger)
   plug(:match)
   plug(:dispatch)
@@ -14,9 +13,14 @@ defmodule HelayClient.Settings.Router do
   end
 
   post "/settings" do
-    {:ok, body_params, _conn} = Plug.Conn.read_body(conn) # Plug.Parsers doesn't work for some reason...
+    # Plug.Parsers doesn't work for some reason...
+    {:ok, body_params, _conn} = Plug.Conn.read_body(conn)
+
     {status, body} =
-      case create_pipeline(Poison.decode!(body_params)) do
+      body_params
+      |> Poison.decode!()
+      |> create_pipeline()
+      |> case do
         {:ok, resp} -> {201, resp}
         _ -> {400, %{"message" => "invalid settings"}}
       end
@@ -29,6 +33,7 @@ defmodule HelayClient.Settings.Router do
   end
 
   defp encode(body), do: Poison.encode!(body)
+
   defp create_pipeline(%{"endpoint" => endpoint, "transforms" => transforms} = req) do
     pipeline = Enum.map(transforms, &Transform.new/1)
     res = Settings.put(endpoint, pipeline)
