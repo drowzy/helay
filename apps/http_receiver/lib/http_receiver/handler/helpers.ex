@@ -11,6 +11,8 @@ defmodule HttpReceiver.Handler.Helpers do
     {do_decode_body(body), req}
   end
 
+  def request_path(req), do: {:cowboy_req.path(req), req}
+
   defp do_decode_body(body) do
     case Poison.decode(body) do
       {:ok, decoded_value} ->
