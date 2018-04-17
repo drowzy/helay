@@ -6,12 +6,13 @@ defmodule HttpReceiver.Handler do
   def init(req, state), do: handle(req, state)
 
   def handle(%{method: "POST"} = req, %{mfa: mfa} = state) do
-    {body, req} = Helpers.decode_body(req)
+    {body, _req} = Helpers.decode_body(req)
+    {path, _req} = Helpers.request_path(req)
     {mod, fun, args} = mfa
 
-    Logger.info("Hook triggered #{:cowboy_req.uri(req)}")
+    Logger.info("Hook triggered #{path}")
 
-    apply(mod, fun, args ++ [body])
+    {:ok, _pid} = Task.start(mod, fun, args ++ [{path, body}])
 
     {result, req} = respond(req, 200, %{"message" => "ok"})
     {result, req, state}
