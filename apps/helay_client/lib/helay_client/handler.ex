@@ -1,10 +1,10 @@
 defmodule HelayClient.Handler do
   require Logger
-  alias HelayClient.{Transform, Settings.KV}
+  alias HelayClient.{Transform, Settings, Settings.KV}
 
   def handle(_arg, {endpoint, body}) do
     endpoint
-    |> KV.get()
+    |> KV.get_or_default(default_transform(endpoint))
     |> Map.get(:transforms)
     |> Transform.activate(body)
     |> Enum.reduce_while(body, &transform/2)
@@ -34,4 +34,6 @@ defmodule HelayClient.Handler do
         {:halt, reason}
     end
   end
+
+  defp default_transform(endpoint), do: %Settings{transforms: [%Transform{type: :console, args: endpoint}]}
 end

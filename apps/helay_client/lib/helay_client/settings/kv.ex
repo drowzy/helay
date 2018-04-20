@@ -10,6 +10,10 @@ defmodule HelayClient.Settings.KV do
     Agent.get(__MODULE__, &Map.get(&1, endpoint))
   end
 
+  def get_or_default(endpoint, default) do
+    get(endpoint) || default
+  end
+
   def get_all() do
     Agent.get(__MODULE__, &Map.values(&1))
   end

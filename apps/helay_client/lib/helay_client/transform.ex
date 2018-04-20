@@ -1,5 +1,5 @@
 defmodule HelayClient.Transform do
-  alias HelayClient.Utils
+  alias HelayClient.{Utils, Transform.Jq, Transform.Console}
   @derive {Poison.Encoder, only: [:args, :type]}
   defstruct type: nil, args: nil, input: nil, output: nil
 
@@ -24,6 +24,7 @@ defmodule HelayClient.Transform do
 
   def new(opts), do: struct(__MODULE__, opts)
 
-  def run_with(%__MODULE__{type: :jq} = t), do: Transform.Jq.run(t)
+  def run_with(%__MODULE__{type: :jq} = t), do: Jq.run(t)
+  def run_with(%__MODULE__{type: :console} = t), do: Console.run(t)
   def run_with(%__MODULE__{type: type}), do: {:error, {:not_supported, type}}
 end
