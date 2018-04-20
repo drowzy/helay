@@ -31,7 +31,8 @@ use Mix.Config
 config :helay_client,
   client: %{
     mode: {:system, "HELAY_CLIENT_MODE", "mixed"},
-    receiver_port: {:system, "HELAY_RECEIVER_PORT", 4000}
+    receiver_port: {:system, "HELAY_RECEIVER_PORT", 4000},
+    settings_port: {:system, "HELAY_SETTINGS_PORT", 4001}
   }
 
 config :helay_client,
