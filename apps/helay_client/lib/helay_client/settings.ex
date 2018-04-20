@@ -1,23 +1,13 @@
 defmodule HelayClient.Settings do
-  use Agent
+  alias HelayClient.Transform
+  defstruct endpoint: nil, transforms: nil
 
-  def start_link(_) do
-    Agent.start_link(fn -> Map.new() end, name: __MODULE__)
+  def new(%{"endpoint" => endpoint, "transforms" => transforms} = m) do
+    %__MODULE__{
+      endpoint: endpoint,
+      transforms: Enum.map(transforms, &Transform.new/1)
+    }
   end
 
-  def get(endpoint) do
-    Agent.get(__MODULE__, &Map.get(&1, endpoint))
-  end
-
-  def get_all() do
-    Agent.get(__MODULE__, &Map.values(&1))
-  end
-
-  def has?(endpoint) do
-    Agent.get(__MODULE__, &Map.has_key?(&1, endpoint))
-  end
-
-  def put(endpoint, setting) do
-    Agent.update(__MODULE__, &Map.put(&1, endpoint, setting))
-  end
+  def new(opts), do: struct(__MODULE__, opts)
 end

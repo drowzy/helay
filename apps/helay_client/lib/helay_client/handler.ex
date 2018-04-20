@@ -1,13 +1,13 @@
 defmodule HelayClient.Handler do
   require Logger
-  alias HelayClient.{Transform, Settings}
+  alias HelayClient.{Transform, Settings.KV}
 
   def handle(_arg, {endpoint, body}) do
     endpoint
-    |> Settings.get()
+    |> KV.get()
+    |> Map.get(:transforms)
     |> Transform.activate(body)
-    |> Enum.reduce(body, &transform/2)
-    |> Enum.each(&Logger.info("Transform #{inspect(&1)}"))
+    |> Enum.reduce_while(body, &transform/2)
   end
 
   def dispatch(args) do
@@ -15,13 +15,23 @@ defmodule HelayClient.Handler do
   end
 
   defp transform(%Transform{} = t, input) do
-    %Transform{output: output} =
+    result =
       t
       |> Map.put(:input, input)
-      |> run_with()
+      |> Transform.run_with()
 
-    output
+    case result do
+      {:ok, %Transform{output: output}} ->
+        {:cont, output}
+
+      {:error, reason} ->
+        Logger.error(
+          "Transform of type `#{Atom.to_string(t.type)}` failed with: #{reason}.\nargs :: #{
+            t.args
+          }\ninput :: #{inspect(input)}"
+        )
+
+        {:halt, reason}
+    end
   end
-
-  defp run_with(%Transform{type: :jq} = t), do: Transform.Jq.run(t)
 end

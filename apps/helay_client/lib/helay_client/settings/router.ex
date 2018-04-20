@@ -1,7 +1,7 @@
 defmodule HelayClient.Settings.Router do
   use Plug.Router
 
-  alias HelayClient.{Settings, Transform}
+  alias HelayClient.{Settings, Settings.KV, Transform}
 
   plug(Plug.Logger)
   plug(:match)
@@ -19,9 +19,10 @@ defmodule HelayClient.Settings.Router do
     {status, body} =
       body_params
       |> Poison.decode!()
-      |> create_pipeline()
+      |> Settings.new()
+      |> KV.put()
       |> case do
-        {:ok, resp} -> {201, resp}
+        :ok -> {201, %{"message" => "ok"}}
         _ -> {400, %{"message" => "invalid settings"}}
       end
 
@@ -33,13 +34,4 @@ defmodule HelayClient.Settings.Router do
   end
 
   defp encode(body), do: Poison.encode!(body)
-
-  defp create_pipeline(%{"endpoint" => endpoint, "transforms" => transforms} = req) do
-    pipeline = Enum.map(transforms, &Transform.new/1)
-    res = Settings.put(endpoint, pipeline)
-
-    {res, req}
-  end
-
-  defp create_pipeline(req), do: :error
 end

@@ -1,4 +1,5 @@
 defmodule HelayClient.Transform do
+  alias HelayClient.Utils
   @derive {Poison.Encoder, only: [:args, :type]}
   defstruct type: nil, args: nil, input: nil, output: nil
 
@@ -16,22 +17,13 @@ defmodule HelayClient.Transform do
   end
 
   def new(opts) when is_map(opts) do
-    opts = Map.update!(opts, "type", &(String.to_atom(&1)))
+    opts = Map.update!(opts, "type", &String.to_atom(&1))
 
-    to_struct(__MODULE__, opts)
+    Utils.to_struct(__MODULE__, opts)
   end
 
   def new(opts), do: struct(__MODULE__, opts)
 
-  # https://stackoverflow.com/questions/30927635/in-elixir-how-do-you-initialize-a-struct-with-a-map-variable
-  defp to_struct(kind, attrs) do
-    struct = struct(kind)
-
-    Enum.reduce(Map.to_list(struct), struct, fn {k, _}, acc ->
-      case Map.fetch(attrs, Atom.to_string(k)) do
-        {:ok, v} -> %{acc | k => v}
-        :error -> acc
-      end
-    end)
-  end
+  def run_with(%__MODULE__{type: :jq} = t), do: Transform.Jq.run(t)
+  def run_with(%__MODULE__{type: type}), do: {:error, {:not_supported, type}}
 end
