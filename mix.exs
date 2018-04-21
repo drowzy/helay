@@ -15,6 +15,9 @@ defmodule Helay.Mixfile do
   #
   # Run "mix help deps" for examples and options.
   defp deps do
-    [{:distillery, "~> 1.5", runtime: false}]
+    [
+      {:distillery, "~> 1.5", runtime: false},
+      {:credo, "~> 0.9.1", only: [:dev, :test], runtime: false}
+    ]
   end
 end
