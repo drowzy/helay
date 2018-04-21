@@ -1,6 +1,6 @@
 defmodule HelayClient.Handler do
   require Logger
-  alias HelayClient.{Transform, Settings, Settings.KV}
+  alias HelayClient.{Transform, Middleware, Middleware.KV}
 
   def handle(_arg, {endpoint, body}) do
     endpoint
@@ -37,5 +37,5 @@ defmodule HelayClient.Handler do
   end
 
   defp default_transform(endpoint),
-    do: %Settings{transforms: [%Transform{type: :console, args: endpoint}]}
+    do: %Middleware{transforms: [%Transform{type: :console, args: endpoint}]}
 end

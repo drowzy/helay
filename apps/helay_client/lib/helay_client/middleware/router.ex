@@ -1,25 +1,25 @@
-defmodule HelayClient.Settings.Router do
+defmodule HelayClient.Middleware.Router do
   use Plug.Router
 
-  alias HelayClient.{Settings, Settings.KV, Transform}
+  alias HelayClient.{Middleware, Middleware.KV, Transform}
 
   plug(Plug.Logger)
   plug(:match)
   plug(:dispatch)
 
-  get "/settings" do
-    settings = Settings.get_all()
+  get "/middlewares" do
+    settings = Middleware.get_all()
     send_resp(conn, 200, encode(settings))
   end
 
-  post "/settings" do
+  post "/middlewares" do
     # Plug.Parsers doesn't work for some reason...
     {:ok, body_params, _conn} = Plug.Conn.read_body(conn)
 
     {status, body} =
       body_params
       |> Poison.decode!()
-      |> Settings.new()
+      |> Middleware.new()
       |> KV.put()
       |> case do
         :ok -> {201, %{"message" => "ok"}}

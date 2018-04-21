@@ -1,5 +1,5 @@
-defmodule HelayClient.Settings.Supervisor do
-  alias HelayClient.Settings.{KV, Router}
+defmodule HelayClient.Middleware.Supervisor do
+  alias HelayClient.Middleware.{KV, Router}
   use Supervisor
 
   def start_link(opts) do

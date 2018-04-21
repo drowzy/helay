@@ -1,5 +1,5 @@
-defmodule HelayClient.Settings.KV do
-  alias HelayClient.Settings
+defmodule HelayClient.Middleware.KV do
+  alias HelayClient.Middleware
   use Agent
 
   def start_link(_) do
@@ -22,11 +22,11 @@ defmodule HelayClient.Settings.KV do
     Agent.get(__MODULE__, &Map.has_key?(&1, endpoint))
   end
 
-  def put(endpoint, %Settings{} = setting) do
+  def put(endpoint, %Middleware{} = setting) do
     Agent.update(__MODULE__, &Map.put(&1, endpoint, setting))
   end
 
-  def put(%Settings{endpoint: endpoint} = setting) do
+  def put(%Middleware{endpoint: endpoint} = setting) do
     Agent.update(__MODULE__, &Map.put(&1, endpoint, setting))
   end
 end

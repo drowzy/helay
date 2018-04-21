@@ -10,7 +10,7 @@ defmodule HelayClient.Application do
 
     children =
       [
-        {HelayClient.Settings.Supervisor, port: Utils.parse_port(port)}
+        {HelayClient.Middleware.Supervisor, port: Utils.parse_port(port)}
       ] ++ HelayClient.child_spec(mode, conf)
 
     opts = [strategy: :one_for_one, name: HelayClient.Supervisor]

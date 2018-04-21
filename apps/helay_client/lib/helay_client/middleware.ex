@@ -1,4 +1,4 @@
-defmodule HelayClient.Settings do
+defmodule HelayClient.Middleware do
   alias HelayClient.Transform
   defstruct endpoint: nil, transforms: nil
 
