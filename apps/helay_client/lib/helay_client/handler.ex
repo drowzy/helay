@@ -28,7 +28,7 @@ defmodule HelayClient.Handler do
         {:cont, output}
 
       {:error, reason} ->
-        Logger.error("#{log_m} failed with: #{reason}.\nargs :: #{t.args}\ninput :: #{inspect(input)}")
+        Logger.error("#{log_m} failed with: #{reason}.\nargs :: #{inspect t.args}\ninput :: #{inspect(input)}")
 
         {:halt, reason}
     end
