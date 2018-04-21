@@ -1,5 +1,5 @@
 defmodule HelayClient.Transform do
-  alias HelayClient.{Utils, Transform.Jq, Transform.Console}
+  alias HelayClient.{Utils, Transform.Jq, Transform.Console, Transform.HTTP}
   @derive {Poison.Encoder, only: [:args, :type]}
   defstruct type: nil, args: nil, input: nil, output: nil
 
@@ -26,5 +26,6 @@ defmodule HelayClient.Transform do
 
   def run_with(%__MODULE__{type: :jq} = t), do: Jq.run(t)
   def run_with(%__MODULE__{type: :console} = t), do: Console.run(t)
+  def run_with(%__MODULE__{type: :http} = t), do: HTTP.run(t)
   def run_with(%__MODULE__{type: type}), do: {:error, {:not_supported, type}}
 end

@@ -15,6 +15,8 @@ defmodule HelayClient.Handler do
   end
 
   defp transform(%Transform{} = t, input) do
+    log_m = "Transform of type `#{Atom.to_string(t.type)}"
+
     result =
       t
       |> Map.put(:input, input)
@@ -22,18 +24,18 @@ defmodule HelayClient.Handler do
 
     case result do
       {:ok, %Transform{output: output}} ->
+        Logger.info("#{log_m} ok: #{inspect(output)}")
         {:cont, output}
 
       {:error, reason} ->
         Logger.error(
-          "Transform of type `#{Atom.to_string(t.type)}` failed with: #{reason}.\nargs :: #{
-            t.args
-          }\ninput :: #{inspect(input)}"
+          "#{log_m} failed with: #{reason}.\nargs :: #{t.args}\ninput :: #{inspect(input)}"
         )
 
         {:halt, reason}
     end
   end
 
-  defp default_transform(endpoint), do: %Settings{transforms: [%Transform{type: :console, args: endpoint}]}
+  defp default_transform(endpoint),
+    do: %Settings{transforms: [%Transform{type: :console, args: endpoint}]}
 end

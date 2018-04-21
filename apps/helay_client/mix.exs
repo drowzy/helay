@@ -28,7 +28,8 @@ defmodule HelayClient.MixProject do
     [
       {:grpc, github: "tony612/grpc-elixir"},
       {:poison, "~> 3.0"},
-      {:tesla, "~> 0.10.0"},
+      {:tesla, "1.0.0-beta.1"},
+      {:hackney, "~> 1.10"},
       {:confex, "~> 3.3.1"},
       {:porcelain, "~> 2.0"},
       {:cowboy, "~> 2.2.0"},
