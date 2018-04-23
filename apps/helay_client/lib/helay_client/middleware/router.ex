@@ -8,7 +8,7 @@ defmodule HelayClient.Middleware.Router do
   plug(:dispatch)
 
   get "/middlewares" do
-    settings = Middleware.get_all()
+    settings = Middleware.KV.get_all()
     send_resp(conn, 200, encode(settings))
   end
 
