@@ -18,7 +18,7 @@ RUN mix compile --env=prod && \
     mix release --env=prod --name=helay_client
 
 FROM alpine
-RUN apk add --no-cache ncurses-libs libcrypto1.0 bash
+RUN apk add --no-cache ncurses-libs libcrypto1.0 bash jq
 RUN mkdir -p /app /tmp
 
 WORKDIR /app
@@ -26,6 +26,7 @@ WORKDIR /app
 COPY --from=0 /app/_build/prod/ ./
 
 EXPOSE 4000
+EXPOSE 4001
 ENV REPLACE_OS_VARS true
 
 CMD ["./rel/helay_client/bin/helay_client", "foreground"]
