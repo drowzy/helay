@@ -34,7 +34,8 @@ defmodule HelayClient.Transform do
 
   def new(opts), do: struct(__MODULE__, opts)
 
-  def replace_templates(%__MODULE__{args: args, input: input} = t) do
+  def replace_templates(%__MODULE__{args: args, input: input} = t) when is_binary(args), do: %{t | args: Template.substitue(args, input)}
+  def replace_templates(%__MODULE__{args: args, input: input} = t) when is_map(args) do
     new_args =
       args
       |> Template.substitue(input)
@@ -42,6 +43,7 @@ defmodule HelayClient.Transform do
 
     %{t | args: new_args}
   end
+
 
   def run_with(%__MODULE__{type: :jq} = t), do: Jq.run(t)
   def run_with(%__MODULE__{type: :console} = t), do: Console.run(t)

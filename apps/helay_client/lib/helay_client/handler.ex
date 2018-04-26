@@ -20,6 +20,7 @@ defmodule HelayClient.Handler do
     result =
       t
       |> Map.put(:input, input)
+      |> Transform.replace_templates()
       |> Transform.run_with()
 
     case result do

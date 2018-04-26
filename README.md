@@ -1,7 +1,7 @@
 # Helay
 [![Build Status](https://travis-ci.org/drowzy/helay.svg?branch=master)](https://travis-ci.org/drowzy/helay)
 
-webhook relay
+Webhook relay
 
 ## Middlewares
 
