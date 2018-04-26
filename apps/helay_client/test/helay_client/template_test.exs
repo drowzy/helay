@@ -41,4 +41,13 @@ defmodule HelayClient.TemplateTest do
     assert Template.find_keys(%{foo: "<%% foo %>", bar: "foo"}) == [:foo]
     assert Template.find_keys(%{foo: "< foo %>"}) == []
   end
+
+  test "substitue/2 replaces applicable template values" do
+    assert %{foo: "foo"} == Template.substitue(%{foo: "<%= foo %>"}, %{foo: "foo"})
+    assert %{uri: "http://httpbin.org/post"} == Template.substitue(%{uri: "http://httpbin.org/<%= method %>"}, %{method: "post"})
+  end
+
+  test "substitue/2 can handle string maps" do
+    assert %{foo: "foo"} == Template.substitue(%{foo: "<%= foo %>"}, %{"foo" => "foo"})
+  end
 end
