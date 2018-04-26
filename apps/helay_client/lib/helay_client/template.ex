@@ -18,9 +18,9 @@ defmodule HelayClient.Template do
     templetable = as_keyword(input)
 
     args
-      |> find()
-      |> Enum.map(fn {k, v} -> {k, EEx.eval_string(v, templetable)} end)
-      |> Enum.into(%{})
+    |> find()
+    |> Enum.map(fn {k, v} -> {k, EEx.eval_string(v, templetable)} end)
+    |> Enum.into(%{})
   end
 
   defp as_keyword(map) do

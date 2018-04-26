@@ -28,11 +28,16 @@ defmodule HelayClient.Handler do
         {:cont, output}
 
       {:error, reason} ->
-        Logger.error("#{log_m} failed with: #{reason}.\nargs :: #{inspect t.args}\ninput :: #{inspect(input)}")
+        Logger.error(
+          "#{log_m} failed with: #{reason}.\nargs :: #{inspect(t.args)}\ninput :: #{
+            inspect(input)
+          }"
+        )
 
         {:halt, reason}
     end
   end
 
-  defp default_transform(endpoint), do: %Middleware{transforms: [%Transform{type: :console, args: endpoint}]}
+  defp default_transform(endpoint),
+    do: %Middleware{transforms: [%Transform{type: :console, args: endpoint}]}
 end

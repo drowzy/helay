@@ -33,6 +33,7 @@ defmodule HelayClient.TemplateTest do
     <% else %>
     bar
     """
+
     assert Template.in?(expr)
   end
 
@@ -44,7 +45,9 @@ defmodule HelayClient.TemplateTest do
 
   test "substitue/2 replaces applicable template values" do
     assert %{foo: "foo"} == Template.substitue(%{foo: "<%= foo %>"}, %{foo: "foo"})
-    assert %{uri: "http://httpbin.org/post"} == Template.substitue(%{uri: "http://httpbin.org/<%= method %>"}, %{method: "post"})
+
+    assert %{uri: "http://httpbin.org/post"} ==
+             Template.substitue(%{uri: "http://httpbin.org/<%= method %>"}, %{method: "post"})
   end
 
   test "substitue/2 can handle string maps" do

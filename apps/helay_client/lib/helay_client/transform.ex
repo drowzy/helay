@@ -1,5 +1,13 @@
 defmodule HelayClient.Transform do
-  alias HelayClient.{Utils, Transform.Jq, Transform.Console, Transform.HTTP, Transform.File}
+  alias HelayClient.{
+    Utils,
+    Template,
+    Transform.Jq,
+    Transform.Console,
+    Transform.HTTP,
+    Transform.File
+  }
+
   @derive {Poison.Encoder, only: [:args, :type]}
   defstruct type: nil, args: nil, input: nil, output: nil
 
@@ -12,6 +20,8 @@ defmodule HelayClient.Transform do
 
   @callback run(t()) :: {:ok, t()} | {:error, term()}
 
+  def activate(%__MODULE__{} = t, input), do: activate([t], input)
+
   def activate([%__MODULE__{} = h | t], input) do
     [Map.put(h, :input, input) | t]
   end
@@ -23,6 +33,15 @@ defmodule HelayClient.Transform do
   end
 
   def new(opts), do: struct(__MODULE__, opts)
+
+  def replace_templates(%__MODULE__{args: args, input: input} = t) do
+    new_args =
+      args
+      |> Template.substitue(input)
+      |> (&Map.merge(args, &1)).()
+
+    %{t | args: new_args}
+  end
 
   def run_with(%__MODULE__{type: :jq} = t), do: Jq.run(t)
   def run_with(%__MODULE__{type: :console} = t), do: Console.run(t)
