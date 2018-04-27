@@ -59,4 +59,18 @@ defmodule HelayClient.TransformTest do
 
     assert args.uri == base
   end
+
+  test "replace_templates/2 handles string args" do
+    opts = [
+      args: "http://httpbin.org/<%= method %>",
+      input: %{method: "post"}
+    ]
+
+    %Transform{args: args} =
+      opts
+      |> Transform.new()
+      |> Transform.replace_templates()
+
+    assert args == "http://httpbin.org/post"
+  end
 end

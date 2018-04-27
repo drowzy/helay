@@ -14,6 +14,10 @@ defmodule HelayClient.Template do
     |> Enum.filter(fn {k, v} -> in?(v) end)
   end
 
+  def substitue(args, input) when is_binary(args) do
+    EEx.eval_string(args, as_keyword(input))
+  end
+
   def substitue(args, input) do
     templetable = as_keyword(input)
 
