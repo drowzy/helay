@@ -14,7 +14,7 @@ defmodule HelayClient.Transform.HTTP do
       {:ok, response} ->
         Logger.info("Http transforms returned #{inspect(response)} #{response.status}")
         # TODO might want to check resp headers
-        {:ok, %Transform{output: Poison.decode!(response.body)}}
+        {:ok, decode(response.body)}
 
       {:error, reason} = error ->
         Logger.error("Http transforms returned error #{inspect(reason)}")
@@ -25,7 +25,7 @@ defmodule HelayClient.Transform.HTTP do
   def client(args) do
     method = parse_method(args["method"])
     headers = parse_headers(args["headers"])
-    uri = args["uri"]
+    uri = String.trim(args["uri"])
     provided_body = args["body"]
 
     case method do
@@ -45,6 +45,10 @@ defmodule HelayClient.Transform.HTTP do
   defp encode_body(%{}, nil), do: ""
   defp encode_body(nil, nil), do: ""
   defp encode_body(provided, from_previous), do: Poison.encode!(provided || from_previous)
+
+  defp decode(""), do: %Transform{output: ""}
+  defp decode(body), do: %Transform{output: Poison.decode!(body)}
+
   defp parse_headers(headers), do: Enum.into(headers, [])
 
   defp parse_method(method) do
