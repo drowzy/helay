@@ -55,5 +55,7 @@ defmodule HelayClient.Transform do
     %{t | args: new_args}
   end
 
+  def replace_templates(t), do: t
+
   defp new_many(transforms), do: Enum.map(transforms, &new(&1))
 end

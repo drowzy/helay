@@ -1,6 +1,16 @@
 defmodule HelayClient.Pipeline do
   require Logger
-  alias HelayClient.{Transform, Middleware, Middleware.KV}
+
+  alias HelayClient.{
+    Middleware,
+    Middleware.KV,
+    Transform,
+    Transform.Jq,
+    Transform.Console,
+    Transform.HTTP,
+    Transform.File,
+    Transform.Parallel
+  }
 
   def handle(_arg, {endpoint, body}) do
     endpoint
@@ -35,7 +45,7 @@ defmodule HelayClient.Pipeline do
 
       {:error, reason} ->
         Logger.error(
-          "#{log_m} failed with: #{reason}.\nargs :: #{inspect(t.args)}\ninput :: #{
+          "#{log_m} failed with: #{inspect(reason)}.\nargs :: #{inspect(t.args)}\ninput :: #{
             inspect(input)
           }"
         )
@@ -51,5 +61,6 @@ defmodule HelayClient.Pipeline do
   def run_with(%Transform{type: :console} = t), do: Console.run(t)
   def run_with(%Transform{type: :http} = t), do: HTTP.run(t)
   def run_with(%Transform{type: :file} = t), do: File.run(t)
+  def run_with(%Transform{type: :parallel} = t), do: Parallel.run(t)
   def run_with(%Transform{type: type}), do: {:error, {:not_supported, type}}
 end

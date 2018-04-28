@@ -4,8 +4,13 @@ defmodule HelayClient.Transform.Parallel do
   alias HelayClient.{Transform, Pipeline}
 
   def run(%Transform{type: :parallel, args: args, input: input}) do
-    args
-    |> Task.async_stream(&Pipeline.exec(&1, input))
-    |> Stream.run()
+    # TODO
+    output =
+      args
+      |> Task.async_stream(&Pipeline.exec(&1, input))
+      |> Enum.reduce([], fn {status, result}, acc -> [result | acc] end)
+      |> Enum.reverse()
+
+    {:ok, %Transform{output: output}}
   end
 end

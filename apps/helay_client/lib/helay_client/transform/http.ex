@@ -1,11 +1,10 @@
 defmodule HelayClient.Transform.HTTP do
   @behaviour HelayClient.Transform.Transformable
-  import Logger
-
   use Tesla
-  adapter(Tesla.Adapter.Hackney)
-
+  import Logger
   alias HelayClient.Transform
+
+  adapter(Tesla.Adapter.Hackney)
 
   def run(%Transform{type: :http, args: args, input: input}) do
     http_client = client(args)
