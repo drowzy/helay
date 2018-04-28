@@ -1,4 +1,4 @@
-defmodule HelayClient.Handler do
+defmodule HelayClient.Pipeline do
   require Logger
   alias HelayClient.{Transform, Middleware, Middleware.KV}
 
@@ -6,8 +6,13 @@ defmodule HelayClient.Handler do
     endpoint
     |> KV.get_or_default(default_transform(endpoint))
     |> Map.get(:transforms)
-    |> Transform.activate(body)
-    |> Enum.reduce_while(body, &transform/2)
+    |> exec(body)
+  end
+
+  def exec(transforms, input) do
+    transforms
+    |> Transform.activate(input)
+    |> Enum.reduce_while(input, &transform/2)
   end
 
   def dispatch(args) do

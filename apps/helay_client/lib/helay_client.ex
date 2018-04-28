@@ -10,7 +10,7 @@ defmodule HelayClient do
         start:
           {HttpReceiver, :start_link,
            [
-             {HelayClient.Handler, :handle, ["foo"]},
+             {HelayClient.Pipeline, :handle, ["foo"]},
              [port: Utils.parse_port(port), url_base: "hook"]
            ]}
       }
@@ -25,7 +25,7 @@ defmodule HelayClient do
       Supervisor.Spec.worker(HelayClient.Consumer, [
         [
           channel: channel,
-          dispatcher: &HelayClient.Handler.dispatch/1,
+          dispatcher: &HelayClient.Pipeline.dispatch/1,
           provider: provider
         ]
       ])
