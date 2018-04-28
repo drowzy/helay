@@ -1,4 +1,6 @@
 defmodule HelayClient.Template do
+  def in?(arg) when is_map(arg) or arg == nil, do: false
+
   def in?(arg) do
     Regex.match?(~r/<%[%=-].*%>/, arg)
   end

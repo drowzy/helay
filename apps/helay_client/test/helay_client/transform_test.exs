@@ -10,6 +10,19 @@ defmodule HelayClient.TransformTest do
     assert %Transform{type: :jq} = Transform.new(type: :jq)
   end
 
+  test "new/1 with the type parallel creates Transforms recursivly" do
+    opts = %{
+      "type" => "parallel",
+      "args" => [
+        [%{"type" => "jq", "args" => "{foo: .json}"}],
+        [%{"type" => "jq", "args" => "{foo: .json}"}]
+      ]
+    }
+
+    assert %Transform{type: :parallel, args: args} = Transform.new(opts)
+    assert length(args) == 2
+  end
+
   test "activate/2 sets the input to the first Transform" do
     input = %{"foo" => "bar"}
     t = Transform.new(type: :jq)

@@ -26,6 +26,17 @@ defmodule HelayClient.Transform do
     [Map.put(h, :input, input) | t]
   end
 
+  def new(%{"type" => "parallel"} = opts) do
+    {_, new_opts} =
+      opts
+      |> Map.update!("type", &String.to_atom(&1))
+      |> Map.get_and_update!("args", fn transforms ->
+        {transforms, Enum.map(transforms, &new_many(&1))}
+      end)
+
+    Utils.to_struct(__MODULE__, new_opts)
+  end
+
   def new(opts) when is_map(opts) do
     opts = Map.update!(opts, "type", &String.to_atom(&1))
 
@@ -34,7 +45,9 @@ defmodule HelayClient.Transform do
 
   def new(opts), do: struct(__MODULE__, opts)
 
-  def replace_templates(%__MODULE__{args: args, input: input} = t) when is_binary(args), do: %{t | args: Template.substitue(args, input)}
+  def replace_templates(%__MODULE__{args: args, input: input} = t) when is_binary(args),
+    do: %{t | args: Template.substitue(args, input)}
+
   def replace_templates(%__MODULE__{args: args, input: input} = t) when is_map(args) do
     new_args =
       args
@@ -44,10 +57,11 @@ defmodule HelayClient.Transform do
     %{t | args: new_args}
   end
 
-
   def run_with(%__MODULE__{type: :jq} = t), do: Jq.run(t)
   def run_with(%__MODULE__{type: :console} = t), do: Console.run(t)
   def run_with(%__MODULE__{type: :http} = t), do: HTTP.run(t)
   def run_with(%__MODULE__{type: :file} = t), do: File.run(t)
   def run_with(%__MODULE__{type: type}), do: {:error, {:not_supported, type}}
+
+  defp new_many(transforms), do: Enum.map(transforms, &new(&1))
 end
