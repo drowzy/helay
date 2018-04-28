@@ -1,5 +1,5 @@
 defmodule HelayClient.Transform.Parallel do
-  @behaviour HelayClient.Transform
+  @behaviour HelayClient.Transform.Transformable
 
   alias HelayClient.{Transform, Pipeline}
 

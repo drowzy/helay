@@ -26,7 +26,7 @@ defmodule HelayClient.Pipeline do
       t
       |> Map.put(:input, input)
       |> Transform.replace_templates()
-      |> Transform.run_with()
+      |> run_with()
 
     case result do
       {:ok, %Transform{output: output}} ->
@@ -46,4 +46,10 @@ defmodule HelayClient.Pipeline do
 
   defp default_transform(endpoint),
     do: %Middleware{transforms: [%Transform{type: :console, args: endpoint}]}
+
+  def run_with(%Transform{type: :jq} = t), do: Jq.run(t)
+  def run_with(%Transform{type: :console} = t), do: Console.run(t)
+  def run_with(%Transform{type: :http} = t), do: HTTP.run(t)
+  def run_with(%Transform{type: :file} = t), do: File.run(t)
+  def run_with(%Transform{type: type}), do: {:error, {:not_supported, type}}
 end

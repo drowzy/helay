@@ -1,5 +1,5 @@
 defmodule HelayClient.Transform.HTTP do
-  @behaviour HelayClient.Transform
+  @behaviour HelayClient.Transform.Transformable
   import Logger
 
   use Tesla

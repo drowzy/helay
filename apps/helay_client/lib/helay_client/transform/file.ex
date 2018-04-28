@@ -1,5 +1,5 @@
 defmodule HelayClient.Transform.File do
-  @behaviour HelayClient.Transform
+  @behaviour HelayClient.Transform.Transformable
 
   alias HelayClient.Transform
 

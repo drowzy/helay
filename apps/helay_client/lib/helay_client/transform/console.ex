@@ -1,5 +1,5 @@
 defmodule HelayClient.Transform.Console do
-  @behaviour HelayClient.Transform
+  @behaviour HelayClient.Transform.Transformable
   import Logger
 
   alias HelayClient.Transform

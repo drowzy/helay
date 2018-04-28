@@ -1,5 +1,5 @@
 defmodule HelayClient.Transform.Jq do
-  @behaviour HelayClient.Transform
+  @behaviour HelayClient.Transform.Transformable
 
   alias HelayClient.Transform
   alias Porcelain.Result

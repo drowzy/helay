@@ -18,8 +18,6 @@ defmodule HelayClient.Transform do
           output: map() | nil
         }
 
-  @callback run(t()) :: {:ok, t()} | {:error, term()}
-
   def activate(%__MODULE__{} = t, input), do: activate([t], input)
 
   def activate([%__MODULE__{} = h | t], input) do
@@ -56,12 +54,6 @@ defmodule HelayClient.Transform do
 
     %{t | args: new_args}
   end
-
-  def run_with(%__MODULE__{type: :jq} = t), do: Jq.run(t)
-  def run_with(%__MODULE__{type: :console} = t), do: Console.run(t)
-  def run_with(%__MODULE__{type: :http} = t), do: HTTP.run(t)
-  def run_with(%__MODULE__{type: :file} = t), do: File.run(t)
-  def run_with(%__MODULE__{type: type}), do: {:error, {:not_supported, type}}
 
   defp new_many(transforms), do: Enum.map(transforms, &new(&1))
 end
