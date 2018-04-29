@@ -1,12 +1,5 @@
 defmodule HelayClient.Transform do
-  alias HelayClient.{
-    Utils,
-    Template,
-    Transform.Jq,
-    Transform.Console,
-    Transform.HTTP,
-    Transform.File
-  }
+  alias HelayClient.{Utils, Template}
 
   @derive {Poison.Encoder, only: [:args, :type]}
   defstruct type: nil, args: nil, input: nil, output: nil
@@ -29,7 +22,7 @@ defmodule HelayClient.Transform do
       opts
       |> Map.update!("type", &String.to_atom(&1))
       |> Map.get_and_update!("args", fn transforms ->
-        {transforms, Enum.map(transforms, &new_many(&1))}
+        {transforms, Enum.map(transforms, &new_many/1)}
       end)
 
     Utils.to_struct(__MODULE__, new_opts)

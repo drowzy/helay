@@ -1,4 +1,4 @@
-defmodule HelayClient.Transform.Console do
+defmodule HelayClient.Transform.Identity do
   @behaviour HelayClient.Transform.Transformable
   import Logger
 

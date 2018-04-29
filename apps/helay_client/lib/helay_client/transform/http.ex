@@ -2,7 +2,7 @@ defmodule HelayClient.Transform.HTTP do
   @behaviour HelayClient.Transform.Transformable
   use Tesla
   require Logger
-  alias HelayClient.Transform
+  alias HelayClient.{Transform, Utils}
 
   adapter(Tesla.Adapter.Hackney)
 
@@ -48,11 +48,7 @@ defmodule HelayClient.Transform.HTTP do
   defp decode(%Tesla.Env{body: ""}), do: %Transform{output: ""}
 
   defp decode(%Tesla.Env{body: body, headers: headers}) do
-    json? =
-      Enum.any?(headers, fn {type, value} ->
-        String.downcase(type) == "content-type" and String.downcase(value) == "application/json"
-      end)
-
+    json? = Utils.has_content_type?(headers, "application/json")
     output = if json?, do: Poison.decode!(body), else: body
 
     Transform.new(output: output)

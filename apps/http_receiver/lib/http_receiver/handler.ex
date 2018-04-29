@@ -5,10 +5,9 @@ defmodule HttpReceiver.Handler do
 
   def init(req, state), do: handle(req, state)
 
-  def handle(%{method: "POST"} = req, %{mfa: mfa} = state) do
+  def handle(%{method: "POST"} = req, %{mfa: {mod, fun, args}} = state) do
     {body, _req} = Helpers.decode_body(req)
     {path, _req} = Helpers.request_path(req)
-    {mod, fun, args} = mfa
 
     Logger.info("Hook triggered #{path}")
 

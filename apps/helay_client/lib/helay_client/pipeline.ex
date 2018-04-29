@@ -6,7 +6,7 @@ defmodule HelayClient.Pipeline do
     Middleware.KV,
     Transform,
     Transform.Jq,
-    Transform.Console,
+    Transform.Identity,
     Transform.HTTP,
     Transform.File,
     Transform.Parallel
@@ -54,7 +54,7 @@ defmodule HelayClient.Pipeline do
     do: %Middleware{transforms: [%Transform{type: :console, args: endpoint}]}
 
   def run_with(%Transform{type: :jq} = t), do: Jq.run(t)
-  def run_with(%Transform{type: :console} = t), do: Console.run(t)
+  def run_with(%Transform{type: :console} = t), do: Identity.run(t)
   def run_with(%Transform{type: :http} = t), do: HTTP.run(t)
   def run_with(%Transform{type: :file} = t), do: File.run(t)
   def run_with(%Transform{type: :parallel} = t), do: Parallel.run(t)
