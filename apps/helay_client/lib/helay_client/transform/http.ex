@@ -1,7 +1,7 @@
 defmodule HelayClient.Transform.HTTP do
   @behaviour HelayClient.Transform.Transformable
   use Tesla
-  import Logger
+  require Logger
   alias HelayClient.Transform
 
   adapter(Tesla.Adapter.Hackney)
@@ -13,7 +13,7 @@ defmodule HelayClient.Transform.HTTP do
       {:ok, response} ->
         Logger.info("Http transforms returned #{inspect(response)} #{response.status}")
         # TODO might want to check resp headers
-        {:ok, decode(response.body)}
+        {:ok, decode(response)}
 
       {:error, reason} = error ->
         Logger.error("Http transforms returned error #{inspect(reason)}")
@@ -45,8 +45,18 @@ defmodule HelayClient.Transform.HTTP do
   defp encode_body(nil, nil), do: ""
   defp encode_body(provided, from_previous), do: Poison.encode!(provided || from_previous)
 
-  defp decode(""), do: %Transform{output: ""}
-  defp decode(body), do: %Transform{output: Poison.decode!(body)}
+  defp decode(%Tesla.Env{body: ""}), do: %Transform{output: ""}
+
+  defp decode(%Tesla.Env{body: body, headers: headers}) do
+    json? =
+      Enum.any?(headers, fn {type, value} ->
+        String.downcase(type) == "content-type" and String.downcase(value) == "application/json"
+      end)
+
+    output = if json?, do: Poison.decode!(body), else: body
+
+    Transform.new(output: output)
+  end
 
   defp parse_headers(headers), do: Enum.into(headers, [])
 

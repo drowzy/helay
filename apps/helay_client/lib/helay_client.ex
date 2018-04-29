@@ -16,19 +16,4 @@ defmodule HelayClient do
       }
     ]
   end
-
-  def child_spec(_, _conf) do
-    {:ok, %{url: server_url, provider: provider}} = Confex.fetch_env(:helay_client, :server)
-    {:ok, channel} = GRPC.Stub.connect(server_url, [])
-
-    [
-      Supervisor.Spec.worker(HelayClient.Consumer, [
-        [
-          channel: channel,
-          dispatcher: &HelayClient.Pipeline.dispatch/1,
-          provider: provider
-        ]
-      ])
-    ]
-  end
 end

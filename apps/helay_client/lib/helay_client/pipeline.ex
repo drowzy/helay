@@ -25,10 +25,6 @@ defmodule HelayClient.Pipeline do
     |> Enum.reduce_while(input, &transform/2)
   end
 
-  def dispatch(args) do
-    Logger.info("Received dispatch #{args}")
-  end
-
   defp transform(%Transform{} = t, input) do
     log_m = "Transform of type `#{Atom.to_string(t.type)}"
 
