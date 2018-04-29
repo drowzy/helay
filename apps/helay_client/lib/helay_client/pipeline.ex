@@ -20,9 +20,13 @@ defmodule HelayClient.Pipeline do
   end
 
   def exec(transforms, input) do
-    transforms
-    |> Transform.activate(input)
-    |> Enum.reduce_while(input, &transform/2)
+    res =
+      transforms |> Transform.activate(input) |> Enum.reduce_while(input, &transform/2)
+
+    case res do
+      {:error, reason} = err -> err
+      output -> {:ok, output}
+    end
   end
 
   defp transform(%Transform{} = t, input) do
@@ -39,22 +43,22 @@ defmodule HelayClient.Pipeline do
         Logger.info("#{log_m} ok: #{inspect(output)}")
         {:cont, output}
 
-      {:error, reason} ->
+      {:error, reason} = err ->
         Logger.error(
           "#{log_m} failed with: #{inspect(reason)}.\nargs :: #{inspect(t.args)}\ninput :: #{
             inspect(input)
           }"
         )
 
-        {:halt, reason}
+        {:halt, err}
     end
   end
 
   defp default_transform(endpoint),
-    do: %Middleware{transforms: [%Transform{type: :console, args: endpoint}]}
+    do: %Middleware{transforms: [%Transform{type: :identity, args: endpoint}]}
 
   def run_with(%Transform{type: :jq} = t), do: Jq.run(t)
-  def run_with(%Transform{type: :console} = t), do: Identity.run(t)
+  def run_with(%Transform{type: :identity} = t), do: Identity.run(t)
   def run_with(%Transform{type: :http} = t), do: HTTP.run(t)
   def run_with(%Transform{type: :file} = t), do: File.run(t)
   def run_with(%Transform{type: :parallel} = t), do: Parallel.run(t)
