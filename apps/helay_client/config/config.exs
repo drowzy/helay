@@ -30,13 +30,6 @@ use Mix.Config
 #     import_config "#{Mix.env}.exs"
 config :helay_client,
   client: %{
-    mode: {:system, "HELAY_CLIENT_MODE", "mixed"},
     receiver_port: {:system, "HELAY_RECEIVER_PORT", 4000},
     settings_port: {:system, "HELAY_SETTINGS_PORT", 4001}
-  }
-
-config :helay_client,
-  server: %{
-    url: {:system, "HELAY_SERVER", "localhost:50051"},
-    provider: {:system, "HELAY_PROVIDER", "azure"}
   }

@@ -5,15 +5,7 @@ defmodule HelayClient do
 
   def child_spec(:mixed, %{receiver_port: port}) do
     [
-      %{
-        id: HelayClient.HttpReceiver,
-        start:
-          {HttpReceiver, :start_link,
-           [
-             {HelayClient.Pipeline, :handle, ["foo"]},
-             [port: Utils.parse_port(port), url_base: "hook"]
-           ]}
-      }
+
     ]
   end
 end
