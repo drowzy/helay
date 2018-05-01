@@ -1,5 +1,5 @@
 defmodule HelayClient.Middleware.Supervisor do
-  alias HelayClient.Middleware.{KV, Router}
+  alias HelayClient.Middleware.{KV, Router, WorkerSupervisor}
   use Supervisor
 
   def start_link(opts) do
@@ -11,7 +11,9 @@ defmodule HelayClient.Middleware.Supervisor do
 
     children = [
       {KV, []},
-      {Plug.Adapters.Cowboy2, scheme: :http, plug: Router, options: [port: port, timeout: 70_000]}
+      {Plug.Adapters.Cowboy2, scheme: :http, plug: Router, options: [port: port, timeout: 70_000]},
+      {Registry, keys: :unique, name: Middleware.Registry},
+      {WorkerSupervisor, name: Middleware.WorkerSupervisor}
     ]
 
     opts = [strategy: :one_for_one, name: HelayClient.Supervisor]

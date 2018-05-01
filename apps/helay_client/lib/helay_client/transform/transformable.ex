@@ -1,5 +1,5 @@
 defmodule HelayClient.Transform.Transformable do
-  alias HealyClient.Transform
+  alias HelayClient.Transform
 
   @callback run(Transform.t()) :: {:ok, Transform.t()} | {:error, term()}
 end
