@@ -6,17 +6,19 @@ defmodule HelayClient.Middleware.WorkerSupervisor do
   @registry_name Middleware.Registry
 
   def start_link(opts \\ [])
+
   def start_link(opts) do
     DynamicSupervisor.start_link(__MODULE__, opts, opts)
   end
 
   def init(opts \\ [])
+
   def init(_opts) do
     DynamicSupervisor.init(strategy: :one_for_one)
   end
 
-  def start_proc(pid, id, _opts) do
-    spec = {Worker, name: via_tuple(id)}
+  def start_proc(pid, id, opts) do
+    spec = {Worker, Keyword.merge(opts, name: via_tuple(id))}
 
     case DynamicSupervisor.start_child(pid, spec) do
       {:ok, _pid} -> {:ok, id}

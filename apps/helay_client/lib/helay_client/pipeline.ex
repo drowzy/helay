@@ -21,7 +21,9 @@ defmodule HelayClient.Pipeline do
 
   def exec(transforms, input) do
     res =
-      transforms |> Transform.activate(input) |> Enum.reduce_while(input, &transform/2)
+      transforms
+      |> Transform.activate(input)
+      |> Enum.reduce_while(input, &transform/2)
 
     case res do
       {:error, reason} = err -> err

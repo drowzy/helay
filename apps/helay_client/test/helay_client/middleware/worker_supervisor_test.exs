@@ -5,7 +5,10 @@ defmodule HelayClient.Middleware.WorkerSupervisorTest do
 
   setup do
     {:ok, pid} = start_supervised({WorkerSupervisor, []})
-    {:ok, id} = WorkerSupervisor.start_proc(pid, "test_proc", [])
+
+    {:ok, id} =
+      WorkerSupervisor.start_proc(pid, "test_proc", mfa: {Keyword, :fetch, [[value: 1]]})
+
     {:ok, id: id, pid: pid}
   end
 
