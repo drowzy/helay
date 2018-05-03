@@ -26,20 +26,34 @@ defmodule HelayClient.Middleware.Worker do
     {:ok, state}
   end
 
-  def count(pid, type), do: GenServer.call(pid, {:count, type})
+  def count(pid), do: GenServer.call(pid, :count)
+
   def exec_async(pid, input), do: GenServer.cast(pid, {:exec, input})
 
-  def handle_call({:count, :success}, _from, %State{success_count: count} = state),
-    do: {:reply, {:ok, count}, state}
+  def exec(pid, input), do: GenServer.call(pid, {:exec, input})
 
-  def handle_call({:count, :total}, _from, %State{total_count: count} = state),
-    do: {:reply, {:ok, count}, state}
+  def pending?(pid, ref), do: GenServer.call(pid, {:pending, ref})
 
-  def handle_call({:count, :error}, _from, %State{error_count: count} = state),
-    do: {:reply, {:ok, count}, state}
+  def handle_call(:count, _from, %State{} = state) do
+    count = Map.take(state, [:success_count, :error_count, :total_count])
+
+    {:reply, {:ok, count}, state}
+  end
+
+  def handle_call({:exec, input}, from, state) do
+    {ref, new_state} = run(input, from, state)
+
+    {:reply, {:ok, ref}, new_state}
+  end
+
+  def handle_call({:pending, ref}, _from, %State{pending: pending} = state) do
+    pending? = Enum.any?(pending, fn {task_ref, _} -> task_ref == ref end)
+
+    {:reply, pending?, state}
+  end
 
   def handle_cast({:exec, input}, state) do
-    new_state = run(input, nil, state)
+    {_ref, new_state} = run(input, nil, state)
 
     {:noreply, new_state}
   end
@@ -56,7 +70,7 @@ defmodule HelayClient.Middleware.Worker do
       state
       |> Map.update!(key, &(&1 + 1))
       |> Map.update!(:total_count, &(&1 + 1))
-      |> Map.update!(:pending, &Enum.filter(&1, fn task_ref -> ref != task_ref end))
+      |> Map.update!(:pending, &Enum.filter(&1, fn {task_ref, _from} -> ref != task_ref end))
 
     {:noreply, new_state}
   end
@@ -77,7 +91,7 @@ defmodule HelayClient.Middleware.Worker do
        state
        | total_count: total + 1,
          error_count: errors + 1,
-         pending: Enum.filter(pending, &(&1 != ref))
+         pending: Enum.filter(pending, fn {task_ref, _from} -> task_ref != ref end)
      }}
   end
 
@@ -89,6 +103,6 @@ defmodule HelayClient.Middleware.Worker do
         apply(mod, fun, args ++ [input])
       end)
 
-    %{s | pending: [{ref, from} | pending]}
+    {ref, %{s | pending: [{ref, from} | pending]}}
   end
 end

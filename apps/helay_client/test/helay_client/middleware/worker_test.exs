@@ -11,9 +11,7 @@ defmodule HelayClient.Middleware.WorkerTest do
   end
 
   test "can return the different counts", %{pid: pid} do
-    assert {:ok, 0} = Worker.count(pid, :total)
-    assert {:ok, 0} = Worker.count(pid, :success)
-    assert {:ok, 0} = Worker.count(pid, :error)
+    assert {:ok, %{total_count: 0, error_count: 0, success_count: 0}} = Worker.count(pid)
   end
 
   test "increments total & success counts when result is ok", %{pid: pid} do
@@ -21,8 +19,7 @@ defmodule HelayClient.Middleware.WorkerTest do
     # TODO
     Process.sleep(20)
 
-    assert {:ok, 1} = Worker.count(pid, :total)
-    assert {:ok, 1} = Worker.count(pid, :success)
+    assert {:ok, %{total_count: 1, success_count: 1}} = Worker.count(pid)
   end
 
   test "{:error, reason} increments the error_count", %{pid: pid} do
@@ -30,8 +27,7 @@ defmodule HelayClient.Middleware.WorkerTest do
     # TODO
     Process.sleep(20)
 
-    assert {:ok, 1} = Worker.count(pid, :total)
-    assert {:ok, 1} = Worker.count(pid, :error)
+    assert {:ok, %{total_count: 1, error_count: 1}} = Worker.count(pid)
   end
 
   @tag :capture_log
@@ -41,7 +37,12 @@ defmodule HelayClient.Middleware.WorkerTest do
 
     Process.sleep(20)
 
-    assert {:ok, 1} = Worker.count(pid, :total)
-    assert {:ok, 1} = Worker.count(pid, :error)
+    assert {:ok, %{total_count: 1, error_count: 1}} = Worker.count(pid)
+  end
+
+  test "should remove the task from pending once it's done", %{pid: pid} do
+    {:ok, ref} = Worker.exec(pid, :value)
+
+     refute Worker.pending?(pid, ref)
   end
 end
