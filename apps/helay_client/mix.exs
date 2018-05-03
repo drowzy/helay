@@ -26,13 +26,13 @@ defmodule HelayClient.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:grpc, github: "tony612/grpc-elixir"},
       {:poison, "~> 3.0"},
       {:tesla, "1.0.0-beta.1"},
       {:hackney, "~> 1.10"},
       {:confex, "~> 3.3.1"},
       {:porcelain, "~> 2.0"},
       {:cowboy, "~> 2.2.0"},
+      {:uuid, "~> 1.1"},
       {:plug, "~> 1.5"},
       {:http_receiver, in_umbrella: true}
       # {:dep_from_hexpm, "~> 0.3.0"},

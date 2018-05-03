@@ -1,13 +1,14 @@
 defmodule HelayClient.Middleware do
-  alias HelayClient.Transform
-  defstruct endpoint: nil, transforms: nil
+  alias HelayClient.{Transform, Utils}
+  defstruct id: nil, endpoint: nil, transforms: []
 
-  def new(%{"endpoint" => endpoint, "transforms" => transforms} = m) do
-    %__MODULE__{
-      endpoint: endpoint,
-      transforms: Enum.map(transforms, &Transform.new/1)
-    }
+  def new(opts) when is_map(opts) do
+    __MODULE__
+      |> Utils.to_struct(opts)
+      |> Map.put(:id, UUID.uuid4())
+      |> Map.update!(:transforms, fn ts -> Enum.map(ts, &Transform.new/1) end)
   end
 
-  def new(opts), do: struct(__MODULE__, opts)
+
+  def new(opts), do: __MODULE__ |> struct(opts) |> Map.put(:id, UUID.uuid4())
 end

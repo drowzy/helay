@@ -47,17 +47,14 @@ defmodule HelayClient.Pipeline do
 
       {:error, reason} = err ->
         Logger.error(
-          "#{log_m} failed with: #{inspect(reason)}.\nargs :: #{inspect(t.args)}\ninput :: #{
-            inspect(input)
-          }"
+          "#{log_m} failed with: #{inspect(reason)}.\nargs :: #{inspect(t.args)}\ninput :: #{inspect(input)}"
         )
 
         {:halt, err}
     end
   end
 
-  defp default_transform(endpoint),
-    do: %Middleware{transforms: [%Transform{type: :identity, args: endpoint}]}
+  defp default_transform(endpoint), do: %Middleware{transforms: [%Transform{type: :identity, args: endpoint}]}
 
   def run_with(%Transform{type: :jq} = t), do: Jq.run(t)
   def run_with(%Transform{type: :identity} = t), do: Identity.run(t)

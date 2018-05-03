@@ -43,6 +43,6 @@ defmodule HelayClient.Middleware.WorkerTest do
   test "should remove the task from pending once it's done", %{pid: pid} do
     {:ok, ref} = Worker.exec(pid, :value)
 
-     refute Worker.pending?(pid, ref)
+    refute Worker.pending?(pid, ref)
   end
 end
