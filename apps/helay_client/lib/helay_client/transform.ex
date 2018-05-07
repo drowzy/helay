@@ -19,9 +19,9 @@ defmodule HelayClient.Transform do
 
   def new(%{"type" => "parallel"} = opts) do
     __MODULE__
-      |> Utils.to_struct(opts)
-      |> Map.update!(:type, &String.to_atom/1)
-      |> Map.update!(:args, fn ts -> Enum.map(ts, &new_many/1) end)
+    |> Utils.to_struct(opts)
+    |> Map.update!(:type, &String.to_atom/1)
+    |> Map.update!(:args, fn ts -> Enum.map(ts, &new_many/1) end)
   end
 
   def new(opts) when is_map(opts) do

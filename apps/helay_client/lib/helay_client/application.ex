@@ -6,7 +6,8 @@ defmodule HelayClient.Application do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
-    {:ok, %{settings_port: port, receiver_port: r_port}} = Confex.fetch_env(:helay_client, :client)
+    {:ok, %{settings_port: port, receiver_port: r_port}} =
+      Confex.fetch_env(:helay_client, :client)
 
     children = [
       {HelayClient.Middleware.Supervisor, port: Utils.parse_port(port)},

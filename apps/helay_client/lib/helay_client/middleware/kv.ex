@@ -22,11 +22,14 @@ defmodule HelayClient.Middleware.KV do
     Agent.get(__MODULE__, &Map.has_key?(&1, endpoint))
   end
 
-  def put(endpoint, %Middleware{} = setting) do
-    Agent.update(__MODULE__, &Map.put(&1, endpoint, setting))
+  def put(endpoint, %Middleware{} = m) do
+    Agent.update(__MODULE__, &Map.put(&1, endpoint, m))
   end
 
-  def put(%Middleware{endpoint: endpoint} = setting) do
-    Agent.update(__MODULE__, &Map.put(&1, endpoint, setting))
+  def put(%Middleware{id: id} = m) do
+    case Agent.update(__MODULE__, &Map.put(&1, id, m)) do
+      :ok -> {:ok, m}
+      {:error, _reason} = err -> err
+    end
   end
 end

@@ -13,7 +13,7 @@ defmodule HelayClient.Middleware.Supervisor do
       {KV, []},
       {Plug.Adapters.Cowboy2, scheme: :http, plug: Router, options: [port: port, timeout: 70_000]},
       {Registry, keys: :unique, name: Middleware.Registry},
-      {WorkerSupervisor, name: Middleware.WorkerSupervisor},
+      {WorkerSupervisor, name: MiddlewareWorkerSupervisor},
       {Task.Supervisor, name: Middleware.TaskSupervisor}
     ]
 
