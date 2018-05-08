@@ -1,6 +1,6 @@
 defmodule HelayClient.Transform.Identity do
   @behaviour HelayClient.Transform.Transformable
-  import Logger
+  require Logger
 
   alias HelayClient.Transform
 

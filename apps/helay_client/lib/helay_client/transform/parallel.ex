@@ -8,7 +8,7 @@ defmodule HelayClient.Transform.Parallel do
     output =
       args
       |> Task.async_stream(&Pipeline.exec(&1, input))
-      |> Enum.reduce([], fn {status, result}, acc -> [result | acc] end)
+      |> Enum.reduce([], fn {_status, result}, acc -> [result | acc] end)
       |> Enum.reverse()
 
     {:ok, %Transform{output: output}}

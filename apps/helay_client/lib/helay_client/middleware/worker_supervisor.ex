@@ -41,7 +41,7 @@ defmodule HelayClient.Middleware.WorkerSupervisor do
     end
   end
 
-  defp via_tuple(middleware_id) do
+  def via_tuple(middleware_id) do
     {:via, Registry, {@registry_name, middleware_id}}
   end
 end
