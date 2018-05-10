@@ -1,4 +1,4 @@
-defmodule HelayClient.Middleware.Router do
+defmodule HelayClient.API.Middleware do
   use Plug.Router
   require Logger
 
@@ -8,12 +8,12 @@ defmodule HelayClient.Middleware.Router do
   plug(:match)
   plug(:dispatch)
 
-  get "/middlewares" do
+  get "/" do
     settings = Middleware.KV.get_all()
     send_resp(conn, 200, encode(settings))
   end
 
-  post "/middlewares" do
+  post "/" do
     # Plug.Parsers doesn't work for some reason...
     {:ok, body_params, _conn} = Plug.Conn.read_body(conn)
 
@@ -26,13 +26,13 @@ defmodule HelayClient.Middleware.Router do
     send_resp(conn, status, encode(body))
   end
 
-  get "/middlewares/:id/metrics" do
+  get "/:id/metrics" do
     {:ok, count} = Middleware.count(id)
 
     send_resp(conn, 200, encode(count))
   end
 
-  post "/middlewares/:id" do
+  post "/:id" do
     {status, body} =
       with {:ok, body_params, _conn} <- Plug.Conn.read_body(conn),
            {:ok, _ref} <- Middleware.exec(id, Poison.decode!(body_params)) do

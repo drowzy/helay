@@ -1,5 +1,4 @@
-defmodule HelayClient.Middleware.Supervisor do
-  alias HelayClient.Middleware.{KV, Router, WorkerSupervisor}
+defmodule HelayClient.Trigger.Supervisor do
   use Supervisor
 
   def start_link(opts) do
@@ -11,9 +10,8 @@ defmodule HelayClient.Middleware.Supervisor do
 
     children = [
       {KV, []},
-      {Registry, keys: :unique, name: Middleware.Registry},
-      {WorkerSupervisor, name: MiddlewareWorkerSupervisor},
-      {Task.Supervisor, name: Middleware.TaskSupervisor}
+      {Registry, keys: :unique, name: Trigger.Registry},
+      {DynamicSupervisor, strategy: :one_for_one, name: Trigger.DynamicSupervisor}
     ]
 
     opts = [strategy: :one_for_one, name: HelayClient.Supervisor]

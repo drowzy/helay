@@ -1,4 +1,4 @@
-defmodule HelayClient.HTTP do
+defmodule HelayClient.Utils.HTTP do
   use Tesla
   alias HelayClient.Utils
 

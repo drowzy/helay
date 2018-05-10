@@ -19,7 +19,9 @@ defmodule HelayClient.Application do
              {HelayClient.Pipeline, :handle, ["foo"]},
              [port: Utils.parse_port(r_port), url_base: "hook"]
            ]}
-      }
+      },
+      {Plug.Adapters.Cowboy2, scheme: :http, plug: HelayClient.API, options: [port: port, timeout: 70_000]},
+      {Task.Supervisor, name: Helay.TaskSupervisor}
     ]
 
     opts = [strategy: :one_for_one, name: HelayClient.Supervisor]

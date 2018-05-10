@@ -2,7 +2,7 @@ defmodule HelayClient.Transform.HTTP do
   @behaviour HelayClient.Transform.Transformable
   use Tesla
   require Logger
-  alias HelayClient.{Transform, HTTP}
+  alias HelayClient.{Transform, Utils.HTTP}
 
   adapter(Tesla.Adapter.Hackney)
 
