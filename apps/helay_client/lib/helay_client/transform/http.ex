@@ -22,6 +22,7 @@ defmodule HelayClient.Transform.HTTP do
   end
 
   defp decode(%Tesla.Env{body: ""}), do: %Transform{output: ""}
+
   defp decode(%Tesla.Env{body: body, headers: headers}) do
     json? = HTTP.has_content_type?(headers, "application/json")
     output = if json?, do: Poison.decode!(body), else: body

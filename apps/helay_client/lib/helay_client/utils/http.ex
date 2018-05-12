@@ -35,6 +35,7 @@ defmodule HelayClient.Utils.HTTP do
   defp encode_body(provided, from_previous), do: Poison.encode!(provided || from_previous)
 
   defp parse_headers(headers), do: Enum.into(headers, [])
+
   defp parse_method(method) do
     method
     |> String.downcase()

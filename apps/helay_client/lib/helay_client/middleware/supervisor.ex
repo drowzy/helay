@@ -8,7 +8,7 @@ defmodule HelayClient.Middleware.Supervisor do
 
   def init(opts) do
     children = [
-      {KV, name: MiddlewareKV},
+      {KV, name: MiddlewareKV}
     ]
 
     opts = [strategy: :one_for_one, name: Middleware.Supervisor]

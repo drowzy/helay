@@ -5,6 +5,7 @@ defmodule HelayClient.Trigger.WorkerSupervisor do
   alias HelayClient.{Trigger, Trigger.Server}
 
   def start_link(opts \\ [])
+
   def start_link(opts) do
     DynamicSupervisor.start_link(__MODULE__, opts, name: __MODULE__)
   end
@@ -15,7 +16,9 @@ defmodule HelayClient.Trigger.WorkerSupervisor do
 
   def start_child(opts) do
     {name, opts} = Keyword.pop(opts, :name)
-    new_opts = Keyword.new()
+
+    new_opts =
+      Keyword.new()
       |> Keyword.put(:id, Trigger.registry_name(Keyword.fetch!(opts, :type), name))
       |> Keyword.put(:registry, @registry)
 

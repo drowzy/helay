@@ -6,8 +6,8 @@ defmodule HelayClient.API do
   plug(:match)
   plug(:dispatch)
 
-  forward "/middlewares", to: HelayClient.API.Middleware
-  forward "/triggers", to: HelayClient.API.Trigger
+  forward("/middlewares", to: HelayClient.API.Middleware)
+  forward("/triggers", to: HelayClient.API.Trigger)
 
   match _ do
     send_resp(conn, 404, "oops")

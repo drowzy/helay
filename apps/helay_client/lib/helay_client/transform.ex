@@ -1,5 +1,6 @@
 defmodule HelayClient.Transform do
   require Logger
+
   alias HelayClient.{
     Utils,
     Template,
@@ -90,7 +91,7 @@ defmodule HelayClient.Transform do
       {:error, reason} = err ->
         Logger.error(
           "#{log_m} failed with: #{inspect(reason)}.\nargs :: #{inspect(t.args)}\ninput :: #{
-          inspect(input)
+            inspect(input)
           }"
         )
 

@@ -13,8 +13,8 @@ defmodule HelayClient.API.Middleware do
   get "/" do
     body =
       @kv_name
-        |> KV.get_all()
-        |> encode()
+      |> KV.get_all()
+      |> encode()
 
     send_resp(conn, 200, body)
   end
@@ -34,9 +34,9 @@ defmodule HelayClient.API.Middleware do
 
     {status, data} =
       body_params
-        |> Poison.decode!()
-        |> Middleware.new()
-        |> (&(KV.put(@kv_name, &1.id, &1))).()
+      |> Poison.decode!()
+      |> Middleware.new()
+      |> (&KV.put(@kv_name, &1.id, &1)).()
 
     send_resp(conn, status, encode(data))
   end

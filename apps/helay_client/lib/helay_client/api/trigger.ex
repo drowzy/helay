@@ -35,7 +35,7 @@ defmodule HelayClient.API.Trigger do
       body_params
       |> Poison.decode!()
       |> Trigger.new()
-      |> (&(KV.put(@kv_name, &1.name, &1))).()
+      |> (&KV.put(@kv_name, &1.name, &1)).()
 
     {:ok, _pid} = HelayClient.Trigger.WorkerSupervisor.start_child(Map.to_list(data))
 
@@ -47,8 +47,8 @@ defmodule HelayClient.API.Trigger do
 
     {status, res} =
       @kv_name
-        |> KV.get(id)
-        |> Trigger.yield(Poison.decode!(body_params))
+      |> KV.get(id)
+      |> Trigger.yield(Poison.decode!(body_params))
 
     send_resp(conn, :ok, encode(%{"status" => inspect(status), "data" => res}))
   end
