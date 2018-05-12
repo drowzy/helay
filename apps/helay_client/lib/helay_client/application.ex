@@ -6,20 +6,12 @@ defmodule HelayClient.Application do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
-    {:ok, %{settings_port: port, receiver_port: r_port}} =
+    {:ok, %{settings_port: port}} =
       Confex.fetch_env(:helay_client, :client)
 
     children = [
-      {HelayClient.Middleware.Supervisor, port: Utils.parse_port(port)},
-      %{
-        id: HelayClient.HttpReceiver,
-        start:
-          {HttpReceiver, :start_link,
-           [
-             {HelayClient.Pipeline, :handle, ["foo"]},
-             [port: Utils.parse_port(r_port), url_base: "hook"]
-           ]}
-      },
+      {HelayClient.Middleware.Supervisor, []},
+      {HelayClient.Trigger.Supervisor, []},
       {Plug.Adapters.Cowboy2, scheme: :http, plug: HelayClient.API, options: [port: port, timeout: 70_000]},
       {Task.Supervisor, name: Helay.TaskSupervisor}
     ]

@@ -1,5 +1,5 @@
 defmodule HelayClient.Middleware.Supervisor do
-  alias HelayClient.Middleware.{KV, Router, WorkerSupervisor}
+  alias HelayClient.KV
   use Supervisor
 
   def start_link(opts) do
@@ -7,16 +7,11 @@ defmodule HelayClient.Middleware.Supervisor do
   end
 
   def init(opts) do
-    port = Keyword.get(opts, :port, 4001)
-
     children = [
-      {KV, []},
-      {Registry, keys: :unique, name: Middleware.Registry},
-      {WorkerSupervisor, name: MiddlewareWorkerSupervisor},
-      {Task.Supervisor, name: Middleware.TaskSupervisor}
+      {KV, name: MiddlewareKV},
     ]
 
-    opts = [strategy: :one_for_one, name: HelayClient.Supervisor]
+    opts = [strategy: :one_for_one, name: Middleware.Supervisor]
 
     Supervisor.init(children, opts)
   end

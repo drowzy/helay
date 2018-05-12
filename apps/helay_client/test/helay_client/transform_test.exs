@@ -86,4 +86,22 @@ defmodule HelayClient.TransformTest do
 
     assert args == "http://httpbin.org/post"
   end
+
+  describe "apply_to/2" do
+    setup do
+      transforms = [%Transform{type: :identity}]
+      {:ok, ts: transforms, input: "identity"}
+    end
+
+    @tag :capture_log
+    test "returns {:ok, result} if successful", %{ts: ts, input: input} do
+      assert {:ok, output} = Transform.apply_to(ts, input)
+      assert output == input
+    end
+
+    @tag :capture_log
+    test "returns {:error, reason} if not successful", %{input: input} do
+      assert {:error, {:not_supported, _}} = Transform.apply_to([%Transform{type: :error}], input)
+    end
+  end
 end

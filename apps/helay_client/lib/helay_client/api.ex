@@ -12,6 +12,4 @@ defmodule HelayClient.API do
   match _ do
     send_resp(conn, 404, "oops")
   end
-
-  defp encode(body), do: Poison.encode!(body)
 end

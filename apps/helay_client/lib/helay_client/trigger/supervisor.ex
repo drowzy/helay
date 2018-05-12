@@ -1,6 +1,8 @@
 defmodule HelayClient.Trigger.Supervisor do
   use Supervisor
 
+  alias HelayClient.KV
+
   def start_link(opts) do
     Supervisor.start_link(__MODULE__, opts, name: __MODULE__)
   end
@@ -9,9 +11,9 @@ defmodule HelayClient.Trigger.Supervisor do
     port = Keyword.get(opts, :port, 4001)
 
     children = [
-      {KV, []},
+      {KV, name: TriggerKV},
       {Registry, keys: :unique, name: Trigger.Registry},
-      {DynamicSupervisor, strategy: :one_for_one, name: Trigger.DynamicSupervisor}
+      {HelayClient.Trigger.WorkerSupervisor, []}
     ]
 
     opts = [strategy: :one_for_one, name: HelayClient.Supervisor]

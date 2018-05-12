@@ -70,7 +70,6 @@ defmodule HelayClient.Transform do
   def apply_with(%__MODULE__{type: :jq} = t), do: Jq.run(t)
   def apply_with(%__MODULE__{type: :identity} = t), do: Identity.run(t)
   def apply_with(%__MODULE__{type: :http} = t), do: HTTP.run(t)
-  def apply_with(%__MODULE__{type: :file} = t), do: File.run(t)
   def apply_with(%__MODULE__{type: :parallel} = t), do: Parallel.run(t)
   def apply_with(%__MODULE__{type: type}), do: {:error, {:not_supported, type}}
 

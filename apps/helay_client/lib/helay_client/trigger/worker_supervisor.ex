@@ -1,21 +1,26 @@
 defmodule HelayClient.Trigger.WorkerSupervisor do
   use DynamicSupervisor
 
-  alias HelayClient.Trigger.Server
+  @registry Trigger.Registry
+  alias HelayClient.{Trigger, Trigger.Server}
 
   def start_link(opts \\ [])
   def start_link(opts) do
-    DynamicSupervisor.start_link(__MODULE__, opts, opts)
+    DynamicSupervisor.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
-  def init(opts \\ [])
   def init(_opts) do
     DynamicSupervisor.init(strategy: :one_for_one)
   end
 
-  def start_child(pid, opts) do
-    spec = {Server, opts}
+  def start_child(opts) do
+    {name, opts} = Keyword.pop(opts, :name)
+    new_opts = Keyword.new()
+      |> Keyword.put(:id, Trigger.registry_name(Keyword.fetch!(opts, :type), name))
+      |> Keyword.put(:registry, @registry)
 
-    DynamicSupervisor.start_child(pid, spec)
+    spec = {Server, Keyword.merge(opts, new_opts)}
+
+    DynamicSupervisor.start_child(__MODULE__, spec)
   end
 end
