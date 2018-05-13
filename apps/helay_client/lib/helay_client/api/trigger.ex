@@ -37,7 +37,7 @@ defmodule HelayClient.API.Trigger do
       |> Trigger.new()
       |> (&KV.put(@kv_name, &1.name, &1)).()
 
-    {:ok, _pid} = HelayClient.Trigger.WorkerSupervisor.start_child(Map.to_list(data))
+    {:ok, _pid} = HelayClient.Trigger.start_link(data)
 
     send_resp(conn, 201, encode(data))
   end

@@ -35,8 +35,7 @@ defmodule HelayClient.Trigger.Server do
     {:reply, {:ok, assoc_t}, %State{state | bindings: bindings}}
   end
 
-  def handle_call({:yield, input}, _from, %State{bindings: [], id: id} = state),
-    do: {:reply, no_assoc(id), state}
+  def handle_call({:yield, _input}, _from, %State{bindings: [], id: id} = state), do: {:reply, no_assoc(id), state}
 
   def handle_call(
         {:yield, input},
@@ -57,6 +56,5 @@ defmodule HelayClient.Trigger.Server do
     {:reply, reply, state}
   end
 
-  defp no_assoc(id),
-    do: {:error, {:not_associated, "Trigger #{id} does not have any associated middlewares"}}
+  defp no_assoc(id), do: {:error, {:not_associated, "Trigger #{id} does not have any associated middlewares"}}
 end

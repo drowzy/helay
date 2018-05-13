@@ -7,7 +7,6 @@ defmodule HelayClient.Transform do
     Transform.Jq,
     Transform.Identity,
     Transform.HTTP,
-    Transform.File,
     Transform.Parallel
   }
 
@@ -90,9 +89,7 @@ defmodule HelayClient.Transform do
 
       {:error, reason} = err ->
         Logger.error(
-          "#{log_m} failed with: #{inspect(reason)}.\nargs :: #{inspect(t.args)}\ninput :: #{
-            inspect(input)
-          }"
+          "#{log_m} failed with: #{inspect(reason)}.\nargs :: #{inspect(t.args)}\ninput :: #{inspect(input)}"
         )
 
         {:halt, err}

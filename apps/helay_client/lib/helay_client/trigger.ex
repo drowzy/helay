@@ -2,6 +2,7 @@ defmodule HelayClient.Trigger do
   alias HelayClient.Utils
 
   @registry Trigger.Registry
+  @cron Trigger.Cron
 
   defmodule Binding do
     defstruct conditions: []
@@ -18,6 +19,20 @@ defmodule HelayClient.Trigger do
   end
 
   def new(opts), do: __MODULE__ |> struct(opts) |> Map.put(:id, UUID.uuid4())
+
+  def start_link(%__MODULE__{type: :cron} = opts) do
+    with {:ok, pid} <- HelayClient.Trigger.WorkerSupervisor.start_child(Map.to_list(opts)),
+         {:ok, _job} <- HelayClient.Trigger.Cron.add_job(@cron, opts) do
+      IO.puts("STARTED CRON MAN")
+      {:ok, pid}
+    else
+      err -> err
+    end
+  end
+
+  def start_link(opts) when is_map(opts) do
+    HelayClient.Trigger.WorkerSupervisor.start_child(Map.to_list(opts))
+  end
 
   def associate(%__MODULE__{type: type, name: name}, binding, middleware) do
     with {:ok, pid, _value} <- lookup(type, name),

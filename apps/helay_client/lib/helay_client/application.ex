@@ -11,8 +11,7 @@ defmodule HelayClient.Application do
     children = [
       {HelayClient.Middleware.Supervisor, []},
       {HelayClient.Trigger.Supervisor, []},
-      {Plug.Adapters.Cowboy2,
-       scheme: :http, plug: HelayClient.API, options: [port: port, timeout: 70_000]},
+      {Plug.Adapters.Cowboy2, scheme: :http, plug: HelayClient.API, options: [port: port, timeout: 70_000]},
       {Task.Supervisor, name: Helay.TaskSupervisor}
     ]
 

@@ -34,6 +34,8 @@ defmodule HelayClient.MixProject do
       {:cowboy, "~> 2.2.0"},
       {:uuid, "~> 1.1"},
       {:plug, "~> 1.5"},
+      {:quantum, "~> 2.2"},
+      {:timex, "~> 3.0"},
       {:http_receiver, in_umbrella: true}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
